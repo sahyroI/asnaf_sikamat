@@ -45,7 +45,12 @@
   </div>
 </div>
 
-  <script src="logMasuk.js"></script>
+  <script>
+    function logout(){
+      firebase.auth().signOut();
+      window.location.href = 'index.html';
+    }
+  </script>
 
 <header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
   <img class="w3-image" src="mb03.jpg" alt="Poster" width="1500" height="500">
