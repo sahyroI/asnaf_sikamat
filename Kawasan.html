@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<title>Asnaf Sikamat</title>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body>
+
+
+  <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCEAGbgSVTj47-3SeM9JBzz1W-qVFGQ9iE",
+      authDomain: "asnaf-sikamat.firebaseapp.com",
+      databaseURL: "https://asnaf-sikamat.firebaseio.com",
+      projectId: "asnaf-sikamat",
+      storageBucket: "asnaf-sikamat.appspot.com",
+      messagingSenderId: "701871286419"
+    };
+    firebase.initializeApp(config);
+  </script>
+
+<!-- Leave out Storage -->
+<!-- <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase-storage.js"></script> -->
+
+<script>
+  var config = {
+    // ...
+  };
+  firebase.initializeApp(config);
+
+</script>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+    <a class="w3-bar-item w3-button"><b>Asnaf Sikamat</b></a>
+    <!-- Float links to the right. Hide them on small screens -->
+    <div class="w3-right w3-hide-small">
+      <a href="Asnaf_main.html" class="w3-bar-item w3-button">Balik</a>
+      <a class="w3-bar-item w3-button" onclick="logout()">Log Keluar</a>
+    </div>
+  </div>
+</div>
+
+  <script src="logMasuk.js"></script>
+
+<header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
+  <img class="w3-image" src="mb03.jpg" alt="Poster" width="1500" height="500">
+  <div class="w3-display-middle w3-margin-top w3-center">
+</header>
+
+<style>
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+</style>
+</head>
+<body>
+
+  <div class="w3-row-padding">
+  <div class="w3-half">
+    <h1 class="w3-xlarge w3-text-black"><b><blockquote>Senarai Nama</blockquote></b></h1>
+    <h2 id="pKawasan">Kawasan</h2>
+  </div>
+  <div class="w3-half">
+    <button type="button" class="btn btn-default btn-sm" onclick="window.print();return false;"><b>Print</b></button>
+  </div>
+</div>
+
+<style>
+  div button {
+    float: right;
+    margin-left: -50%;
+    margin-top: 2em;
+  }
+</style>
+
+<script>
+  var kKawasan = window.location.href.split('?').pop();
+  var hKawasan;
+  if(kKawasan == "Jalan_Jelebu"){
+    hKawasan = "Jalan Jelebu"
+  }
+  else if(kKawasan == "Kg._Merbah"){
+    hKawasan = "Kg. Merbah"
+  }
+  else if(kKawasan == "Taman_Desa_Kiara"){
+    hKawasan = "Taman Desa Kiara"
+  }
+  else if(kKawasan == "Taman_Desa_Rhu"){
+    hKawasan = "Taman Desa Rhu"
+  }
+  else if(kKawasan == "Taman_Jujur"){
+    hKawasan = "Taman Jujur"
+  }
+  else if(kKawasan == "Taman_Sikamat"){
+    hKawasan = "Taman Sikamat"
+  }
+  else if(kKawasan == "Tanjong_Ipoh"){
+    hKawasan = "Tanjong Ipoh"
+  }
+  else if(kKawasan == "Kg._Ujong_Pasir"){
+    hKawasan = "Kg. Ujong Pasir"
+  }
+  else if(kKawasan == "Taman_Pelangi"){
+    hKawasan = "Taman Pelangi"
+  }
+  else if(kKawasan == "Taman_Penaga"){
+    hKawasan = "Taman Penaga"
+  }
+  else if(kKawasan == "Desa_Beringin"){
+    hKawasan = "Desa Beringin"
+  }
+  else if(kKawasan == "College_Height"){
+    hKawasan = "College Height"
+  }
+  pKawasan.innerText = hKawasan;
+</script>
+
+<p/>
+<div class="w3-container">
+  <table id="ex-table" border="1" class="w3-table-all w3-card-4" >
+    <tr>
+      <td width="10%"><b>Nama</b></td>
+      <td width="10%"><b>Alamat</b></td>
+      <td width="5%"><b>No K/P</b></td>
+      <td width="5%"><b>No Tel</b></td>
+      <td width="5%"><b>Umur</b></td>
+      <td width="5%"><b>Status</b></td>
+      <td width="5%"><b>Sakit</b></td>
+      <td width="10%"><b>Tanggungan</b></td>
+      <td width="10%"><b>Pendapatan</b></td>
+      <td width="10%"><b>Sumbangan</b></td>
+      <td width="5%"><b>Dun</b></td>
+      <td width="10%"><b>Komen</b></td>
+    </tr>
+  </table>
+
+  <script>
+
+    var tbS = document.getElementById('ex-table');
+    var rowIndex = 1;
+    var kawasanT = window.location.href.split('?').pop()
+    var databaseRef = firebase.database().ref('senarai').orderByChild('masaD');
+
+      databaseRef.once('value', function(snapshot){
+      snapshot.forEach(function(childSnapshot) {
+          var childKey = childSnapshot.key;
+          var childData = childSnapshot.val();
+
+          var dKawasan = childData.kawasan;
+
+          if(dKawasan == kawasanT){
+            var row = tbS.insertRow(rowIndex);
+            var cellNama = row.insertCell(0);
+            var cellAlamat = row.insertCell(1);
+            var cellNoKP = row.insertCell(2);
+            var cellNoTel = row.insertCell(3);
+            var cellUmur = row.insertCell(4);
+            var cellStatus = row.insertCell(5);
+            var cellSakit = row.insertCell(6);
+            var cellTanggung = row.insertCell(7);
+            var cellDapat = row.insertCell(8);
+            var cellSumbang = row.insertCell(9);
+            var cellDun = row.insertCell(10);
+            var cellKomen = row.insertCell(11);
+
+            cellNama.appendChild(document.createTextNode(childData.nama));
+            cellAlamat.appendChild(document.createTextNode(childData.alamat));
+            cellNoKP.appendChild(document.createTextNode(childData.noKP));
+            cellNoTel.appendChild(document.createTextNode(childData.noTel));
+            cellUmur.appendChild(document.createTextNode(childData.umur));
+            cellStatus.appendChild(document.createTextNode(childData.status));
+            cellSakit.appendChild(document.createTextNode(childData.sakit));
+            cellTanggung.appendChild(document.createTextNode(childData.tanggungan));
+            cellDapat.appendChild(document.createTextNode(childData.pendapatan));
+            cellSumbang.appendChild(document.createTextNode(childData.sumbangan));
+            cellDun.appendChild(document.createTextNode(childData.dun));
+            cellKomen.appendChild(document.createTextNode(childData.komen));
+
+            rowIndex = rowIndex + 1;
+          }
+        });
+      });
+</script>
+</div>
+
+<p/>
+
+<!-- Footer -->
+<footer class="w3-center w3-black w3-padding">
+  <p>&copy; 2018, SAHYRO</p>
+</footer>
+
+</html>

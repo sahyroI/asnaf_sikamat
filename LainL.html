@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+<title>Asnaf Sikamat</title>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body>
+
+
+  <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCEAGbgSVTj47-3SeM9JBzz1W-qVFGQ9iE",
+      authDomain: "asnaf-sikamat.firebaseapp.com",
+      databaseURL: "https://asnaf-sikamat.firebaseio.com",
+      projectId: "asnaf-sikamat",
+      storageBucket: "asnaf-sikamat.appspot.com",
+      messagingSenderId: "701871286419"
+    };
+    firebase.initializeApp(config);
+  </script>
+
+<!-- Leave out Storage -->
+<!-- <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase-storage.js"></script> -->
+
+<script>
+  var config = {
+    // ...
+  };
+  firebase.initializeApp(config);
+
+</script>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+    <a class="w3-bar-item w3-button"><b>Asnaf Sikamat</b></a>
+    <!-- Float links to the right. Hide them on small screens -->
+    <div class="w3-right w3-hide-small">
+      <a href="Asnaf_main.html" class="w3-bar-item w3-button">Balik</a>
+      <a class="w3-bar-item w3-button" onclick="logout()">Log Keluar</a>
+    </div>
+  </div>
+</div>
+
+  <script src="logMasuk.js"></script>
+
+<style>
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+</style>
+</head>
+<body>
+    <br>
+    <h2 class="w3-xlarge w3-text-black"><b><blockquote>LAIN-LAIN</blockquote></b></h2>
+    <h3 class="w3-xlarge w3-text-black"><b><blockquote>Senarai Nama</blockquote></b></h3>
+
+<p/>
+<div class="w3-container">
+  <table id="ex-table" border="1" class="w3-table-all w3-card-4" >
+    <tr>
+      <td width="20%"><b>Nama</b></td>
+      <td width="10%"><b>No K/P</b></td>
+      <td width="10%"><b>Cetak</b></td>
+      <td width="10%"><b>Kemaskini</b></td>
+      <td width="10%"><b>Padam</b></td>
+    </tr>
+  </table>
+
+  <script>
+
+    var tbS = document.getElementById('ex-table');
+    var rowIndex = 1;
+    var databaseRef = firebase.database().ref('senarai').orderByChild('masaD');
+
+      databaseRef.once('value', function(snapshot){
+      snapshot.forEach(function(childSnapshot) {
+          var childKey = childSnapshot.key;
+          var childData = childSnapshot.val();
+
+          var row = tbS.insertRow(rowIndex);
+          var cellNama = row.insertCell(0);
+          var cellNoKP = row.insertCell(1);
+          var cellCetak = row.insertCell(2);
+          var cellKemas = row.insertCell(3);
+          var cellPadam = row.insertCell(4);
+
+          cellNama.appendChild(document.createTextNode(childData.nama));
+          cellNoKP.appendChild(document.createTextNode(childData.noKP));
+
+          var pKP = childData.noKP;
+          var pNama = childData.nama;
+          var pAlamat = childData.alamat;
+          var pKawasan = childData.kawasan;
+          var pTel = childData.noTel;
+          var pUmur = childData.umur;
+          var pStatus = childData.status;
+          var pSakit = childData.sakit;
+          var pTanggung = childData.tanggungan;
+          var pDapat = childData.pendapatan;
+          var pSumbang = childData.sumbangan;
+          var pKomen = childData.komen;
+          var pUndi = childData.kawasanUndi;
+
+          var btn = document.createElement('input');
+          btn.type = "button";
+          btn.className = "btn";
+          btn.value = "CETAK";
+          btn.onclick = (function(pKP) {return function() {cetakD(pKP);}})(pKP);
+          cellCetak.appendChild(btn);
+
+          var btn2 = document.createElement('input');
+          btn2.type = "button";
+          btn2.className = "btn";
+          btn2.value = "KEMASKINI";
+          btn2.onclick = (function(pKP) {return function() {KemaskiniD(pKP,pNama,pAlamat,pKawasan,pTel,pUmur,pStatus,pSakit,pTanggung,pDapat,pSumbang,pUndi,pKomen);}})
+                          (pKP,pNama,pAlamat,pKawasan,pTel,pUmur,pStatus,pSakit,pTanggung,pDapat,pSumbang,pUndi,pKomen);
+          cellKemas.appendChild(btn2);
+
+          var btn3 = document.createElement('input');
+          btn3.type = "button";
+          btn3.className = "btn";
+          btn3.value = "PADAM";
+          btn3.onclick = (function(pKP) {return function() {padamD(pKP,pNama);}})(pKP,pNama);
+          cellPadam.appendChild(btn3);
+
+          rowIndex = rowIndex + 1;
+        });
+      });
+
+      function cetakD(x) {
+          var someValue = x;
+          window.open("Print2.html?"+someValue);
+      }
+
+      function padamD(x,y) {
+        if (confirm("Sahkan padam data " + y + "?")) {
+          firebase.database().ref().child('/senarai/' + x).remove();
+          alert('Data telah dipadam');
+          reload_page();
+        }
+        else {
+          alert("Padam Batal");
+        }
+      }
+
+      function KemaskiniD(pKP,pNama,pAlamat,pKawasan,pTel,pUmur,pStatus,pSakit,pTanggung,pDapat,pSumbang,pUndi,pKomen) {
+
+        document.getElementById('id01').style.display='block';
+
+        document.getElementById('pNama').value = pNama;
+        document.getElementById('pAlamat').value = pAlamat;
+        document.getElementById('pKawasan').value = pKawasan;
+        document.getElementById('pIC').value = pKP;
+        document.getElementById('pTel').value = pTel;
+        document.getElementById('pUmur').value = pUmur;
+        document.getElementById('pStatus').value = pStatus;
+        document.getElementById('pSakit').value = pSakit;
+        document.getElementById('pTanggung').value = pTanggung;
+        document.getElementById('pDapat').value = pDapat;
+        document.getElementById('pSumbang').value = pSumbang;
+        document.getElementById('pUndi').value = pUndi;
+        document.getElementById('pKomen').value = pKomen;
+
+      }
+
+      function reload_page(){
+       window.location.reload();
+      }
+</script>
+</div>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}
+
+/*the position the close button */
+.container {
+    padding: 16px;
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button (x) */
+.close {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)}
+    to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+    span.psw {
+       display: block;
+       float: none;
+    }
+    .cancelbtn {
+       width: 100%;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div id="id01" class="modal">
+
+  <form class="modal-content animate">
+   <div class="container">
+     <label for="pnama"><b>Nama</b></label>
+     <input type="text" id="pNama" placeholder="Masukkan nama" name ="pnama" required>
+
+     <label for="palamat"><b>Alamat</b></label>
+     <input type="text" id="pAlamat" placeholder="Masukkan alamat" name ="palamat" required>
+     <br>
+
+     <label for="pkawasan"><b>Kawasan</b></label>
+     <select id="pKawasan" name="pkawasan">
+       <option value="Jalan_Jelebu">Jalan Jelebu</option>
+       <option value="Kg._Merbah">Kg. Merbah</option>
+       <option value="Taman_Desa_Kiara">Taman Desa Kiara</option>
+       <option value="Taman_Desa_Rhu">Taman Desa Rhu</option>
+       <option value="Taman_Jujur">Taman Jujur</option>
+       <option value="Taman_Sikamat">Taman Sikamat</option>
+       <option value="Tanjong_Ipoh">Tanjong Ipoh</option>
+       <option value="Kg._Ujong_Pasir">Kg. Ujong Pasir</option>
+       <option value="Taman_Pelangi">Taman Pelangi</option>
+       <option value="Taman_Penaga">Taman Penaga</option>
+       <option value="Desa_Beringin">Desa Beringin</option>
+       <option value="College_Height">College Height</option>
+     </select>
+     <br><br>
+
+     <label for="pIc"><b>No K/P</b></label>
+     <input type="text" id="pIC" placeholder="Masukkan nombor Kad Pengenalan" name="pIc" required>
+
+     <label for="ptel"><b>No Telefon</b></label>
+     <input type="text" id="pTel" placeholder="Masukkan nombor telefon" name="ptel" required>
+
+     <label for="pumur"><b>Umur</b></label>
+     <input type="number" id="pUmur" placeholder="Masukkan umur" name="pumur" required>
+     <br><br>
+
+     <label for="pstatus"><b>Status</b></label>
+     <select id="pStatus" name="pstatus">
+       <option value="asnaf">Asnaf</option>
+       <option value="miskin">Miskin</option>
+       <option value="ibu_tunggal">Ibu Tunggal</option>
+       <option value="janda">Janda</option>
+       <option value="OKU">OKU</option>
+       <option value="yatim">Yatim</option>
+     </select>
+     <br><br>
+
+     <label for="psakit"><b>Sakit</b></label>
+     <input type="text" id="pSakit" placeholder="Masukkan sakit" name="psakit" required>
+
+     <label for="ptanggung"><b>Tanggungan</b></label>
+     <input type="text" id="pTanggung" placeholder="Masukkan tanggungan" name="ptanggung" required>
+
+     <label for="pdapat"><b>Pendapatan</b></label>
+     <input type="text" id="pDapat" placeholder="Masukkan pendapatan" name="pdapat" required>
+
+     <label for="psumbang"><b>Sumbangan</b></label>
+     <input type="text" id="pSumbang" placeholder="Masukkan sumbangan" name="psumbang" required>
+
+     <label for="pundi"><b>Tempat Mengundi</b></label>
+     <select id="pUndi" name="pundi">
+       <option value="Sikamat">Sikamat</option>
+       <option value="Ampangan">Ampangan</option>
+       <option value="Paroi">Paroi</option>
+     </select>
+     <br><br>
+
+     <label for="pdun"><b>Dun</b></label>
+     <input type="radio" id="pDun" name="pdun" value="Sikamat" checked> Sikamat<br><br>
+
+     <label for="pkomen"><b>Komen</b></label>
+     <input type="text" id="pKomen" placeholder="Komen Tambahan" name="pkomen" required>
+
+      <button type="submit" onclick="save_info();">Kemaskini</button>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Batal</button>
+    </div>
+  </form>
+</div>
+
+<script>
+
+function save_info(){
+
+  var snama = document.getElementById('pNama').value;
+  var salamat = document.getElementById('pAlamat').value;
+  var skawasan = document.getElementById('pKawasan').value;
+  var snoKP = document.getElementById('pIC').value;
+  var snoTel = document.getElementById('pTel').value;
+  var sumur = document.getElementById('pUmur').value;
+  var sstatus = document.getElementById('pStatus').value;
+  var ssakit = document.getElementById('pSakit').value;
+  var stanggungan = document.getElementById('pTanggung').value;
+  var spendapatan = document.getElementById('pDapat').value;
+  var ssumbangan = document.getElementById('pSumbang').value;
+  var sundi = document.getElementById('pUndi').value;
+  var sdun = document.getElementById('pDun').value;
+  var skomen = document.getElementById('pKomen').value;
+
+  var n = new Date();
+  var m = n.getTime();
+  var mDaftar = (-1)*m;
+
+   var data = {
+     nama: snama,
+     alamat: salamat,
+     kawasan: skawasan,
+     noKP: snoKP,
+     noTel: snoTel,
+     umur: sumur,
+     status: sstatus,
+     sakit: ssakit,
+     tanggungan: stanggungan,
+     pendapatan: spendapatan,
+     sumbangan: ssumbangan,
+     kawasanUndi: sundi,
+     dun: sdun,
+     komen: skomen,
+     masaD: mDaftar
+   }
+
+   var updates = {};
+   updates['/senarai/'+ snoKP] = data;
+   firebase.database().ref().update(updates);
+   alert('Data berjaya dikemaskini!');
+   reload_page();
+ }
+
+function reload_page(){
+ window.location.reload();
+}
+
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
+</body>
+
+<p/>
+
+<!-- Footer -->
+<footer class="w3-center w3-black w3-padding">
+  <p>&copy; 2018, SAHYRO</p>
+</footer>
+
+</html>

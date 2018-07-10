@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html>
+<title>Asnaf Sikamat</title>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<body>
+
+
+  <script src="https://www.gstatic.com/firebasejs/5.0.4/firebase.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyCEAGbgSVTj47-3SeM9JBzz1W-qVFGQ9iE",
+      authDomain: "asnaf-sikamat.firebaseapp.com",
+      databaseURL: "https://asnaf-sikamat.firebaseio.com",
+      projectId: "asnaf-sikamat",
+      storageBucket: "asnaf-sikamat.appspot.com",
+      messagingSenderId: "701871286419"
+    };
+    firebase.initializeApp(config);
+  </script>
+
+<!-- Leave out Storage -->
+<!-- <script src="https://www.gstatic.com/firebasejs/4.12.0/firebase-storage.js"></script> -->
+
+<script>
+  var config = {
+    // ...
+  };
+  firebase.initializeApp(config);
+
+</script>
+
+<!-- Navbar (sit on top) -->
+<div class="w3-top">
+  <div class="w3-bar w3-white w3-wide w3-padding w3-card">
+    <a class="w3-bar-item w3-button"><b>Asnaf Sikamat</b></a>
+    <!-- Float links to the right. Hide them on small screens -->
+    <div class="w3-right w3-hide-small">
+      <a onclick="document.getElementById('id01').style.display='block'" style="width:auto;" class="w3-bar-item w3-button">Tambah Maklumat</a>
+      <a class="w3-bar-item w3-button" onclick="logout()">Log Keluar</a>
+    </div>
+  </div>
+</div>
+
+  <script src="logMasuk.js"></script>
+
+<header class="w3-display-container w3-content w3-wide" style="max-width:1500px;" id="home">
+  <img class="w3-image" src="mb02.jpg" alt="Poster" width="1500" height="500">
+  <div class="w3-display-middle w3-margin-top w3-center">
+  </div>
+</header>
+
+<!-- Pie Chart -->
+
+<div class="w3-row">
+<div class="w3-col l8 s12">
+<div class="w3-card-4 w3-margin w3-white">
+  <div class="w3-container">
+  </div>
+
+  <div class="w3-container">
+    <div id="piechart"></div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+<script type="text/javascript">
+
+  var databaseRef = firebase.database().ref('senarai');
+  var cAsnaf = 0;
+  var cMiskin = 0;
+  var cIbu = 0;
+  var cJanda = 0;
+  var cOKU = 0;
+  var cYatim = 0;
+
+  databaseRef.once('value', function(snapshot){
+  snapshot.forEach(function(childSnapshot) {
+      var childKey = childSnapshot.key;
+      var childData = childSnapshot.val();
+
+      var cStatus = childData.status;
+
+      if(cStatus == "asnaf"){
+         cAsnaf = cAsnaf + 1;
+      }
+      else if(cStatus == "miskin"){
+         cMiskin = cMiskin + 1;
+      }
+      else if(cStatus == "ibu_tunggal"){
+         cIbu = cIbu + 1;
+      }
+      else if(cStatus == "janda"){
+         cJanda = cJanda + 1;
+      }
+      else if(cStatus == "OKU"){
+         cOKU = cOKU + 1;
+      }
+      else if(cStatus == "yatim"){
+         cYatim = cYatim + 1;
+      }
+      });
+      drawChart(cAsnaf,cMiskin,cIbu,cJanda,cOKU,cYatim);
+    });
+
+
+
+// Load google charts
+google.charts.load('current', {'packages':['corechart']});
+google.charts.setOnLoadCallback(drawChart);
+
+// Draw the chart and set the chart values
+function drawChart(dAsnaf,dMiskin,dIbu,dJanda,dOKU,dYatim) {
+  var data = google.visualization.arrayToDataTable([
+  ['Status', 'Bilangan'],
+  ['Asnaf', dAsnaf],
+  ['Miskin', dMiskin],
+  ['Ibu Tunggal', dIbu],
+  ['Janda', dJanda],
+  ['OKU', dOKU],
+  ['Yatim', dYatim]
+]);
+
+  // Optional; add a title and set the width and height of the chart
+  var options = {'title':'Dun Sikamat', 'width':800, 'height':600};
+
+  // Display the chart inside the <div> element with id="piechart"
+  var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+  chart.draw(data, options);
+}
+</script>
+
+  </div>
+</div>
+<hr>
+</div>
+
+<div class="w3-col l4">
+  <!-- About Card -->
+  <div class="w3-card w3-margin w3-margin-top">
+    <div class="w3-container w3-white">
+      <h4><b>Pilihan Senarai</b></h4>
+        <div class="w3-row">
+        <div class="w3-col m8 s12">
+          <button class="w3-button w3-padding-large w3-white w3-border" value ="asnaf" onclick="senarai(this.value)"><a> <b>Asnaf</b></a></button>
+          <button class="w3-button w3-padding-large w3-white w3-border" value ="miskin" onclick="senarai(this.value)"><a> <b>Miskin</b></a></button>
+          <button class="w3-button w3-padding-large w3-white w3-border" value ="yatim" onclick="senarai(this.value)"><a> <b>Yatim</b></a></button>
+          <button class="w3-button w3-padding-large w3-white w3-border" value ="ibu_tunggal" onclick="senarai(this.value)"><a> <b>Ibu Tunggal</b></a></button>
+          <button class="w3-button w3-padding-large w3-white w3-border" value ="janda" onclick="senarai(this.value)"><a> <b>Janda</b></a></button>
+          <button class="w3-button w3-padding-large w3-white w3-border" value ="OKU" onclick="senarai(this.value)"><a> <b>OKU</b></a></button>
+          <button class="w3-button w3-padding-large w3-white w3-border" value ="semua" onclick="senarai(this.value)"><a> <b>Semua</b></a></button>
+          <button class="w3-button w3-padding-large w3-white w3-border" value ="bantuan" onclick="fBantuan(this.value)"><a><b>Bantuan Pelajar</b></a></button>
+        </div>
+      </div>
+
+      <script>
+      function senarai(x) {
+          var someValue = x;
+          window.location = 'Senarai.html?'+someValue;
+      }
+      function fBantuan(x) {
+          window.location = 'Bantuan.html';
+      }
+      </script>
+    </div>
+</div><hr>
+
+</div>
+
+<!-- END GRID -->
+</div><br>
+
+<style>
+
+th, td {
+    text-align: left;
+    padding: 8px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+</style>
+</head>
+<body>
+
+<p/>
+<div class="w3-container">
+  <table id="ex-table" border="1" class="w3-table-all w3-card-4" >
+    <tr>
+      <td width="25%"><button onclick="document.getElementById('id01').style.display='block'" class="addbtn"><b>TAMBAH MAKLUMAT</b></button></td>
+      <td width="25%"><button class="sakitbtn" value ="sakit" onclick="sakitF(this.value)"> <b>SAKIT</b></button></td>
+      <td width="25%"><button onclick="document.getElementById('id02').style.display='block'" class="kwsnbtn"><b>KAWASAN</b></button></td>
+      <td width="25%"><button class="deletebtn" onclick="lainL()"><b>LAIN-LAIN</b></button></td>
+    </tr>
+  </table>
+
+  <script>
+    function sakitF(x) {
+        var someValue = x;
+        window.location = 'Senarai.html?'+someValue;
+    }
+    function lainL() {
+      window.location = 'LainL.html';
+    }
+  </script>
+</div>
+
+<p/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body {font-family: Arial, Helvetica, sans-serif;}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+/* Set a style for all buttons */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+/* Extra styles for the cancel button */
+.cancelbtn {
+    width: auto;
+    padding: 10px 18px;
+    background-color: #f44336;
+}
+
+/*the position the close button */
+.container {
+    padding: 16px;
+}
+
+span.psw {
+    float: right;
+    padding-top: 16px;
+}
+
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto 15% auto; /* 5% from the top, 15% from the bottom and centered */
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button (x) */
+.close {
+    position: absolute;
+    right: 25px;
+    top: 0;
+    color: #000;
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: red;
+    cursor: pointer;
+}
+
+/* Add Zoom Animation */
+.animate {
+    -webkit-animation: animatezoom 0.6s;
+    animation: animatezoom 0.6s
+}
+
+@-webkit-keyframes animatezoom {
+    from {-webkit-transform: scale(0)}
+    to {-webkit-transform: scale(1)}
+}
+
+@keyframes animatezoom {
+    from {transform: scale(0)}
+    to {transform: scale(1)}
+}
+
+/* Change styles for span and cancel button on extra small screens */
+@media screen and (max-width: 300px) {
+    span.psw {
+       display: block;
+       float: none;
+    }
+    .cancelbtn {
+       width: 100%;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div id="id01" class="modal">
+
+  <form class="modal-content animate">
+   <div class="container">
+     <label for="pnama"><b>Nama</b></label>
+     <input type="text" id="pNama" placeholder="Masukkan nama" name ="pnama" required>
+
+     <label for="palamat"><b>Alamat</b></label>
+     <input type="text" id="pAlamat" placeholder="Masukkan alamat" name ="palamat" required>
+     <br>
+
+     <label for="pkawasan"><b>Kawasan</b></label>
+     <select id="pKawasan" name="pkawasan">
+       <option value="Jalan_Jelebu">Jalan Jelebu</option>
+       <option value="Kg._Merbah">Kg. Merbah</option>
+       <option value="Taman_Desa_Kiara">Taman Desa Kiara</option>
+       <option value="Taman_Desa_Rhu">Taman Desa Rhu</option>
+       <option value="Taman_Jujur">Taman Jujur</option>
+       <option value="Taman_Sikamat">Taman Sikamat</option>
+       <option value="Tanjong_Ipoh">Tanjong Ipoh</option>
+       <option value="Kg._Ujong_Pasir">Kg. Ujong Pasir</option>
+       <option value="Taman_Pelangi">Taman Pelangi</option>
+       <option value="Taman_Penaga">Taman Penaga</option>
+       <option value="Desa_Beringin">Desa Beringin</option>
+       <option value="College_Height">College Height</option>
+     </select>
+     <br><br>
+
+     <label for="pIc"><b>No K/P</b></label>
+     <input type="text" id="pIC" placeholder="Masukkan nombor Kad Pengenalan" name="pIc" required>
+
+     <label for="ptel"><b>No Telefon</b></label>
+     <input type="text" id="pTel" placeholder="Masukkan nombor telefon" name="ptel" required>
+
+     <label for="pumur"><b>Umur</b></label>
+     <input type="number" id="pUmur" placeholder="Masukkan umur" name="pumur" required>
+     <br><br>
+
+     <label for="pstatus"><b>Status</b></label>
+     <select id="pStatus" name="pstatus">
+       <option value="asnaf">Asnaf</option>
+       <option value="miskin">Miskin</option>
+       <option value="ibu_tunggal">Ibu Tunggal</option>
+       <option value="janda">Janda</option>
+       <option value="OKU">OKU</option>
+       <option value="yatim">Yatim</option>
+     </select>
+     <br><br>
+
+     <label for="psakit"><b>Sakit</b></label>
+     <input type="text" id="pSakit" placeholder="Masukkan sakit" name="psakit" required>
+
+     <label for="ptanggung"><b>Tanggungan</b></label>
+     <input type="text" id="pTanggung" placeholder="Masukkan tanggungan" name="ptanggung" required>
+
+     <label for="pdapat"><b>Pendapatan</b></label>
+     <input type="text" id="pDapat" placeholder="Masukkan pendapatan" name="pdapat" required>
+
+     <label for="psumbang"><b>Sumbangan</b></label>
+     <input type="text" id="pSumbang" placeholder="Masukkan sumbangan" name="psumbang" required>
+
+     <label for="pundi"><b>Tempat Mengundi</b></label>
+     <select id="pUndi" name="pundi">
+       <option value="Sikamat">Sikamat</option>
+       <option value="Ampangan">Ampangan</option>
+       <option value="Paroi">Paroi</option>
+     </select>
+     <br><br>
+
+     <label for="pdun"><b>Dun</b></label>
+     <input type="radio" id="pDun" name="pdun" value="Sikamat" checked> Sikamat<br><br>
+
+     <label for="pkomen"><b>Komen</b></label>
+     <input type="text" id="pKomen" placeholder="Komen Tambahan" name="pkomen" required>
+
+      <button type="submit" onclick="save_info();">Simpan</button>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id01').style.display='none'" class="cancelbtn">Batal</button>
+    </div>
+  </form>
+</div>
+
+<script>
+
+function save_info(){
+
+  var snama = document.getElementById('pNama').value;
+  var salamat = document.getElementById('pAlamat').value;
+  var skawasan = document.getElementById('pKawasan').value;
+  var snoKP = document.getElementById('pIC').value;
+  var snoTel = document.getElementById('pTel').value;
+  var sumur = document.getElementById('pUmur').value;
+  var sstatus = document.getElementById('pStatus').value;
+  var ssakit = document.getElementById('pSakit').value;
+  var stanggungan = document.getElementById('pTanggung').value;
+  var spendapatan = document.getElementById('pDapat').value;
+  var ssumbangan = document.getElementById('pSumbang').value;
+  var sundi = document.getElementById('pUndi').value;
+  var sdun = document.getElementById('pDun').value;
+  var skomen = document.getElementById('pKomen').value;
+
+  var n = new Date();
+  var m = n.getTime();
+  var mDaftar = (-1)*m;
+
+   var data = {
+     nama: snama,
+     alamat: salamat,
+     kawasan: skawasan,
+     noKP: snoKP,
+     noTel: snoTel,
+     umur: sumur,
+     status: sstatus,
+     sakit: ssakit,
+     tanggungan: stanggungan,
+     pendapatan: spendapatan,
+     sumbangan: ssumbangan,
+     kawasanUndi: sundi,
+     dun: sdun,
+     komen: skomen,
+     masaD: mDaftar
+   }
+
+   var updates = {};
+   updates['/senarai/'+ snoKP] = data;
+   firebase.database().ref().update(updates);
+   alert('Data berjaya disimpan!');
+   reload_page();
+ }
+
+
+function reload_page(){
+ window.location.reload();
+}
+
+// Get the modal
+var modal = document.getElementById('id01');
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+</script>
+
+<div id="id02" class="modal">
+
+  <form class="modal-content animate">
+   <div class="container">
+     <label><b>KAWASAN</b></label>
+      <button type="button" onclick="aKawasan(this.value);" value="Jalan_Jelebu">Jalan Jelebu</button>
+      <button type="button" onclick="aKawasan(this.value);" value="Kg._Merbah">Kg. Merbah</button>
+      <button type="button" onclick="aKawasan(this.value);" value="Tama_ Desa_Kiara">Taman Desa Kiara</button>
+      <button type="button" onclick="aKawasan(this.value);" value="Taman_Desa_Rhu">Taman Desa Rhu</button>
+      <button type="button" onclick="aKawasan(this.value);" value="Taman_Jujur">Taman Jujur</button>
+      <button type="button" onclick="aKawasan(this.value);" value="Taman_Sikamat">Taman Sikamat</button>
+      <button type="button" onclick="aKawasan(this.value);" value="Tanjong_Ipoh">Tanjong Ipoh</button>
+      <button type="button" onclick="aKawasan(this.value);" value="Kg._Ujong_Pasir">Kg. Ujong Pasir</button>
+      <button type="button" onclick="aKawasan(this.value);" value="Taman_Pelangi">Taman Pelangi</button>
+      <button type="button" onclick="aKawasan(this.value);" value="Taman_Penaga">Taman Penaga</button>
+      <button type="button" onclick="aKawasan(this.value);" value="Desa_Beringin">Desa Beringin</button>
+      <button type="button" onclick="aKawasan(this.value);" value="College_Height">College Height</button>
+    </div>
+
+    <div class="container" style="background-color:#f1f1f1">
+      <button type="button" onclick="document.getElementById('id02').style.display='none'" class="cancelbtn">Batal</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  function aKawasan(x) {
+      var vkawasan = x;
+      window.location = 'Kawasan.html?'+vkawasan;
+  }
+</script>
+
+</body>
+
+<!-- Footer -->
+<footer class="w3-center w3-black w3-padding">
+  <p>&copy; 2018, SAHYRO</p>
+</footer>
+
+</html>
