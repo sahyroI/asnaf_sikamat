@@ -5,6 +5,8 @@ firebase.auth().onAuthStateChanged(function(user) {
     var user = firebase.auth().currentUser;
 
     if(user != null){
+      alert("Selamat Datang!");
+      window.location.href = 'Asnaf_main.html';
     }
     else{
       window.location.href = 'index.html';
