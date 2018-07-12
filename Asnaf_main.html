@@ -80,6 +80,7 @@
   var cJanda = 0;
   var cOKU = 0;
   var cYatim = 0;
+  var countNum = 0;
 
   databaseRef.once('value', function(snapshot){
   snapshot.forEach(function(childSnapshot) {
@@ -87,6 +88,7 @@
       var childData = childSnapshot.val();
 
       var cStatus = childData.status;
+      countNum = countNum + 1;
 
       if(cStatus == "asnaf"){
          cAsnaf = cAsnaf + 1;
@@ -107,7 +109,7 @@
          cYatim = cYatim + 1;
       }
       });
-      drawChart(cAsnaf,cMiskin,cIbu,cJanda,cOKU,cYatim);
+      drawChart(cAsnaf,cMiskin,cIbu,cJanda,cOKU,cYatim,countNum);
     });
 
 
@@ -117,7 +119,7 @@ google.charts.load('current', {'packages':['corechart']});
 google.charts.setOnLoadCallback(drawChart);
 
 // Draw the chart and set the chart values
-function drawChart(dAsnaf,dMiskin,dIbu,dJanda,dOKU,dYatim) {
+function drawChart(dAsnaf,dMiskin,dIbu,dJanda,dOKU,dYatim,countNum) {
   var data = google.visualization.arrayToDataTable([
   ['Status', 'Bilangan'],
   ['Asnaf', dAsnaf],
@@ -129,7 +131,7 @@ function drawChart(dAsnaf,dMiskin,dIbu,dJanda,dOKU,dYatim) {
 ]);
 
   // Optional; add a title and set the width and height of the chart
-  var options = {'title':'Dun Sikamat', 'width':800, 'height':600};
+  var options = {'title':'Jumlah Keseluruhan : '+countNum, 'width':800, 'height':600, 'pieSliceText':'value-and-percentage'};
 
   // Display the chart inside the <div> element with id="piechart"
   var chart = new google.visualization.PieChart(document.getElementById('piechart'));
